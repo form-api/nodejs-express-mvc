@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>NodeJS, Express, MongoDB, Passport Demo</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/logo-nav.css" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">
+          <h1>LOGO</h1>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/account/Login">Login</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <h1 class="mt-5">NodeJS, Express, MongoDB, Passport Demo</h1>
+      <p>A simple demo app using express, mongodb, passport for beginners</p>
+          <form id="loginform" action="/account/login" method="post">
+              <input type="hidden" name="_csrf" value="{{csrfToken}}">
+              {% if (flash.info) %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                  {{flash.info}}
+                </div>
+              {% endif %}                                
+              <div class="form-group row">                                        
+                <div class="col-sm-12">
+                  <input type="text" class="valid form-control {% if flash.info %}xis-invalid{% endif %}" id="email" name="email" value="{{email}}" placeholder="Email">
+                  <div class="invalid-feedback">
+                      Invalid email and password
+                  </div>                                               
+                </div>
+              </div>
+              <div class="form-group row">                                        
+                <div class="col-sm-12">
+                  <input type="password" aria-describedby="passwordlHelp" class="form-control xis-invalid" id="password" name="password" placeholder="Password">
+                    <div class="invalid-feedback">
+                      password must contain number, one uppercase & a special character.
+                    </div>  
+                    <small id="passwordlHelp" class="form-text text-title">
+                      <a href="/account/forgotpassword">Forgot password?</a> 
+                    </small>                                                                                
+                </div>
+              </div>                            
+              <div class="form-group row">                                        
+                <div class="col-sm-12">
+                  <button type="submit" id="loginbutton" class="btn btn-success btn-block">Log In</button>
+                </div>
+              </div>
+              <div class="form-group row">                                        
+                <div class="col-sm-12 text-center">
+                  <span class="text-title">
+                    or <a href="/account/signup">Sign Up</a> </span>
+                </div>
+              </div>                                 
+            </form>                        
+          </div>  
+
+    </div>
+    <script type="text/javascript">
+      $( "#loginbutton" ).click(function(e) {
+        e.preventDefault()    
+        $(this).prop('disabled', true)
+        $("#loginform").submit()
+      })        
+    </script>
+  </body>
+</html>
+

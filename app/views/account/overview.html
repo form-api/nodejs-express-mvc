@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Form Api</title>    
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <link href="/linearicons/fonts.css" rel="stylesheet">
+        <link href="/css/animate.min.css" rel="stylesheet">
+        <link href="/css/style-demos.css" rel="stylesheet">
+        <link href="/css/style.css" rel="stylesheet">        
+        <link href="/css/prism.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>        
+        <style type="text/css"> 
+          .custom-badge{
+              font-weight: 400;
+              font-size: 23px;
+          }
+        </style>
+    </head>
+    <body data-spy="scroll" data-offset="73" data-target="#navbar-demos">
+        <div id="preloader" style="display: none;">
+            <div id="preloader-inner"></div>
+        </div>
+        <nav class="navbar navbar-expand-lg navbar-light navbar-transparent bg-white fixed-top">
+          <a class="navbar-brand font700" href="/">FORM-API<sub class="fs10 text-muted"> ...</sub></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-demos" aria-controls="navbar-demos" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbar-demos">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                  Hi {{req.user.firstName}}
+                </a>
+                <div class="dropdown-menu">
+                  <a href="/account/logout" class="dropdown-item">Log out</a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </nav>      
+      <main class="main-content"> 
+        <section id="features" class="pt-60 pb50">            
+            <div class="container pt-60">
+                {% if (flash.info) %}
+                  <div id="keyAlert" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong>{{flash.info}}</strong>
+                  </div>
+                {% endif %}
+                <div class="row mb-50">                 
+                  <div class="col-lg-12">
+                    <h5 class="text-centerx font500">Your API Key:</h5> 
+                    <div class="col-lg-3x ml-auto mr-auto bg-demo-form"> 
+                      <div id="keyAlert" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                        <strong>Key is updated!</strong>
+                      </div>
+                      <form id="keyForm" class="form-inline">
+                        {% if req.user.apiKey %}    
+                          <div class="mb-2 mr-sm-2">
+                            <span class="badge custom-badge badge-primary" id="apiKeyValue">{{req.user.apiKey}}</span>     
+                          </div>
+                          <button type="button" class="btn btn-danger mb-2"  data-toggle="modal" data-target="#resetKeyModal">Reset Key</button>
+                        {% else %}
+                            -
+                        {% endif %}
+                      </form>                    
+                    </div>
+                  </div>
+                </div>
+                <div class="modal fade" id="resetKeyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none;" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Alert</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Do you want to replace the current key?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" id="resetKey" class="btn btn-primary">Ok</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>                 
+                <hr>
+                <div class="row mb-50 bg-faded">
+                    <div class="col-lg-12">
+                        <h5 class="text-centerx font500">Remaining Credits:</h5> 
+                         <div class="clearfix pb-2">
+                             <span class="float-right">
+                                 <i class="fa fa-eye mr-2"></i> {{remainingCreditsMessage}}
+                             </span>
+                             <span class="font500 text-muted">{% if needsRecharge == false %} Credits will be reseted on: {{rateValidUntil|date('M d, Y')}} {% endif %}</span>
+                         </div>
+                         <div class="progress bg-white shadow-sm mb-3" style="height: 9px">
+                             <div style="width: {{percentage}}%" class="progress-bar bg-primary progress-bar-animated progress-bar-striped"></div>
+                         </div>
+                    </div>
+                </div> 
+                <hr>                
+            <section id="pricing" class="pt40 pb50 bg-faded">
+                <div class="container">
+                  <div class="row mb-20">
+                      <div class="col-lg-12">
+                          <h5 class="text-centerx font500 text-center">Your current plan is: <span class="badge custom-badge badge-success">{{req.user.getPlan().designation}}</span> {{req.user.getPlan().description}}  
+                            {% if needsRecharge == true %}  
+                              <span class="badge custom-badge badge-danger">Your API Key has expired, please recharge your account</span>                    
+                            {% else%}
+                              {% if req.user.plan != 0%}
+                                Paid Until: {{keyValidUntil|date('M d, Y')}}
+                              {% else %}
+                                Valid until: {{keyValidUntil|date('M d, Y')}}
+                              {% endif %}     
+                            {% endif %} 
+                          </h5>
+                      </div>
+                  </div>   
+                <form id="payment" action="/account/payment" method="post">
+                  <input type="hidden" name="_csrf" value="{{csrfToken}}">
+                  <input type="hidden" id="paypalData" name="paypalData">
+                  <input type="hidden" id="userPlan" name="userPlan">
+                </form>
+                {% if req.user.plan == 0%}
+                  <h5 class="font500 text-center">Upgrade your account:</h5>
+                  <div class="pt-40 row align-items-center wow  fadeInUp animated" style="visibility: visible; animation-name: fadeInUp;">
+                  {% for i in [1,2] %}
+                    <div class="col-lg-4 mb40">
+                        <div class="pricing-card active">
+                            <h4>{{User.getPlans()[i].designation}}</h4>
+                            <div class="price-value">
+                                <sup>$</sup> {{User.getPlans()[i].price}} <sub>/ 1 Month</sub>
+                            </div>
+                            <ul class="list-unstyled">
+                                <li>{{User.getPlans()[i].rate}} Credits per month</li>
+                                <li>Genger API</li>
+                                <li>Zip Codes API</li>
+                                <li>{{User.getPlans()[i].keyValRate}} Key Value pairs</li>
+                                <li>Free Validation API</li>
+                                <li>Technical support</li>
+                            </ul>
+                            <div class="pricing-footer">
+                                <div id="paypal-{{User.getPlans()[i].designation}}-plan-button"></div>
+                            </div>
+                        </div>
+                    </div>
+                  {% endfor %}
+                  </div>
+                {% else %}
+                  <h5 class="font500 text-center">Recharge your account for another month, pay ${{req.user.getPlan().price}}:</h5>
+                      <div class="text-center mb-20" id="paypal-{{req.user.getPlan().designation}}-plan-button"></div>
+                      <div class="row mb-20">
+                          <div class="col-lg-12">
+                              <h5 class="font500 text-center">Your can upgrade or downgrade your plan anytime. your plan will be updated immediately after payment, and your current balance will be transfered to your new plan.
+                              </h5>
+                          </div>
+                      </div>
+                      <div class="col-lg-4 mb40">
+                          <div class="pricing-card">
+                              <h4>Update to <span class="badge custom-badge badge-success">{{User.getPlans()[req.user.getOtherPlan()].designation}}</span></h4>
+                              <div class="price-value">
+                                  <sup>$</sup> {{User.getPlans()[req.user.getOtherPlan()].price}} <sub>/ 1 Month</sub>
+                              </div>
+                              <ul class="list-unstyled">
+                                  <li>{{User.getPlans()[req.user.getOtherPlan()].rate}} Credits per month</li>
+                                  <li>Genger API</li>
+                                  <li>Zip Codes API</li>
+                                  <li>{{User.getPlans()[req.user.getOtherPlan()].keyValRate}} Key Value pairs</li>
+                                  <li>Free Validation API</li>
+                                  <li>Technical support</li>
+                              </ul>
+                              <div class="pricing-footer">
+                                  <div id="paypal-{{User.getPlans()[req.user.getOtherPlan()].designation}}-plan-button"></div>
+                              </div>
+                          </div>
+                      </div>                                
+                {% endif %}  
+            </div>
+        </section>  
+         <hr> 
+        <div class="row mb-50 bg-faded">
+            <div class="col-lg-12">
+              <h5 class="text-centerx font500">Account details:</h5>    
+              <div id="accountAlert" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <strong>Saved !</strong>
+              </div>                       
+              <form id="detailsForm">
+                  <div class="form-group col-md-4">
+                    <label for="formGroupExampleInput">Name:</label>
+                    <input type="text" class="disabledDetail form-control" name="name" id="name" value="{{req.user.name}}" disabled="disabled">
+                    <div class="invalid-feedback">
+                      invalid name
+                    </div> 
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="formGroupExampleInput2">Email:</label>
+                    <input type="text" class="disabledDetail form-control" name="email" id="email" value="{{req.user.email}}"  disabled="disabled">
+                    <div class="invalid-feedback">
+                      invalid email
+                    </div>                     
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="formGroupExampleInput2">Billing Email:</label>
+                    <input type="text" class="disabledDetail form-control" name="billingEmail" id="billingEmail" value="{{req.user.billingEmail}}" disabled="disabled">
+                    <div class="invalid-feedback">
+                      invalid email
+                    </div>                     
+                  </div> 
+                  <button type="button" id="editAccount" class="btn btn-success">Edit</button>
+              </form>
+            </div>
+        </div>
+      </div>
+    </section>
+</main>  
+
+<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+<script type="text/javascript">
+$(function () {
+  var disabledDetails = true
+  $("#editAccount").click(function (e) {
+    if(disabledDetails == true){ $(this).text("Save"); $(".disabledDetail").prop('disabled', false); disabledDetails = false}
+    else{
+      var _this           = $(this)  
+      var validationRule  = {
+        name:           { value: $("#name").val(), isAlpha: true, errorMessage: "Invalid name" },
+        email:          { value: $("#email").val(), isEmail: true }, 
+        billingEmail:   { value: $("#billingEmail").val(), isEmail: true }
+      }
+      $.ajax({headers: {'CSRF-Token': "{{csrfToken}}"}, json: true, url: "/account/callapi", method: 'POST', data: {action: '/validate', method: 'post', data: JSON.stringify(validationRule)}}).done(function( data ) {  
+          $("form#demo input").removeClass('is-invalid')
+          if(!data.errors){
+            $.ajax({headers: {'CSRF-Token': "{{csrfToken}}"}, json: true, url: "/account/update", method: 'POST', data: $("#detailsForm").serializeArray()}).done(function( data ) {  
+              $("#accountAlert").show()
+            })
+          }
+          $.each(data.body, function( key, value ) {
+              if(data.errors[key]) {$("#"+key).addClass('is-invalid')}
+          })
+      })
+    }
+  })  
+  $("#resetKey").click(function (e) {
+    $.ajax({headers: {'CSRF-Token': "{{csrfToken}}"}, json: true, url: "/account/generatekey", method: 'POST'}).done(function( data ) {  
+      $("#resetKeyModal").modal('toggle')
+      $("#apiKeyValue").html(data.key)
+      $("#keyAlert").show()
+    })
+  })
+  {% for i in [1,2] %}
+      paypal.Button.render({
+      env: "{{paypal_env}}", // sandbox | production
+      style: {
+        layout: 'horizontal',  // horizontal | vertical
+        size:   'medium',    // medium | large | responsive
+        color:  'white',       // gold | blue | silver | white | black
+        label:  'pay',
+        fundingicons: true
+      },
+      funding: {
+        allowed: [
+          paypal.FUNDING.CARD
+        ],
+        disallowed: [paypal.FUNDING.CREDIT, paypal.FUNDING.ELV]
+      },
+      commit: true, // Enable Pay Now checkout flow (optional)    
+      client: {     // Create a PayPal app: https://developer.paypal.com/developer/applications/create
+        sandbox: 'AZzesxex8J2M1CRggMbw25j6C32wkJkUwAKPk5XYub0J8mCzPghKjR6Pgs_K_CTiL_3lrsPVfc1kMggV', // khalid2@mail.com
+        production: 'Adc7jGLucaWOFH9oEnlZGEy3umCXFteOHqbBsMwlp9Ro8pXUkgVHa34HS2AkvROFmxn1zN_oHfD0saG1'
+      },
+      payment: function (data, actions) {
+        return actions.payment.create({
+          payment: {
+            transactions: [
+              {
+                amount: {
+                  total: '{{User.getPlans()[i].price}}',
+                  currency: 'USD'
+                }
+              }
+            ]
+          }
+        })
+      },
+      onAuthorize: function (data, actions) {
+        $("#preloader").show()
+        return actions.payment.execute().then(function (r) {  
+          if(r.state == "approved"){
+            $("#paypalData").val(JSON.stringify(r))
+            $("#userPlan").val('{{i}}')
+            $("#payment").submit()    
+          } else{
+            $("#preloader").hide()
+            alert("Unsuccessfull payment.")
+          }
+        })
+        }
+      }, '#paypal-{{User.getPlans()[i].designation}}-plan-button');    
+  {% endfor %}
+})
+</script>
+<div class="bg-darkx">
+    <footer class="container text-left py-5">
+        <div class="row">
+            <div class="col-12 col-md">
+                <h5 class="font500"><img src="/images/logo.png" alt=""></h5>
+                <small class="d-block mb-3 text-muted">© 2018. Form-API | <a href=""> terms & conditions</a> I | <a href=""> privacy</a> </small>
+
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "name": "webformapi",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "./node_modules/.bin/nodemon ./bin/www",
+    "production_start": "node ./bin/www"
+  },
+  "dependencies": {
+    "swig": "*",
+    "compression": "*",
+    "mongoose": "*",
+    "mongoose-validator": "*",
+    "mongoose-unique-validator": "*",
+    "express-session": "*",
+    "connect-mongo": "*",
+    "passport": "*",
+    "passport-local-mongoose": "*",
+    "express": "~4.16.0",
+    "forever": "*",
+    "helmet": "*",
+    "shortid": "*",
+    "moment": "*",
+    "csurf": "*",
+    "cookie-parser": "*",
+    "express-flash-2": "*"
+  },
+  "devDependencies": {
+    "nodemon": "latest"
+  }
+}
